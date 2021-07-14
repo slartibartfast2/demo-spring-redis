@@ -32,7 +32,7 @@ class UserControllerIT {
     }
 
     @Test
-    void testAddAndFind() {
+    void should_add_add_user_and_find_one() {
         assertTrue(redis.isRunning());
         AddUserRequest addUserRequest = new AddUserRequest("123456", "John Smith");
         UserVo userVo = template.postForObject("/users", addUserRequest, UserVo.class);
@@ -40,6 +40,5 @@ class UserControllerIT {
         userVo = template.getForObject("/users/{id}", UserVo.class, "123456");
         assertNotNull(userVo);
         assertEquals("John Smith", userVo.getName());
-        assertEquals(0, userVo.getTransactions().size());
     }
 }

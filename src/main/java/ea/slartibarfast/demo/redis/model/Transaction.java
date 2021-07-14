@@ -3,6 +3,7 @@ package ea.slartibarfast.demo.redis.model;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
+import org.springframework.data.redis.core.TimeToLive;
 import org.springframework.data.redis.core.index.Indexed;
 
 import java.util.ArrayList;
@@ -27,6 +28,9 @@ public class Transaction {
     @NonNull
     private Date createdDate;
     private List<Item> items = new ArrayList<>();
+    @NonNull
+    @TimeToLive
+    private Long timeout;
 
     public void addItem(Item item) {
         this.items.add(item);

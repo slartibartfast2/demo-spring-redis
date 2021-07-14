@@ -1,1 +1,1 @@
-# demo-spring-redis
+# Introduction to Spring Data Redis

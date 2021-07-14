@@ -25,16 +25,25 @@ class RedisTransactionRepositoryTest {
 
     @Test
     @Order(1)
-    void shouldAdd() {
-        Transaction transaction = new Transaction(1L, 1000, TransactionType.JUST_LOOKING, new Date());
+    void should_add_transaction_with_one_second_timeout() {
+        Transaction transaction = new Transaction(1L, 1000, TransactionType.JUST_LOOKING, new Date(), 1L);
         transaction = repository.save(transaction);
         assertNotNull(transaction);
     }
 
     @Test
     @Order(2)
-    void shouldAddAnother() {
-        Transaction transaction = new Transaction(1L, 1000, TransactionType.SALE, new Date());
+    void should_not_find_transaction_by_type_when_transaction_is_expired() throws InterruptedException {
+        Thread.sleep(1000L);
+
+        List<Transaction> transactions = repository.findByType(TransactionType.JUST_LOOKING);
+        assertEquals(0, transactions.size());
+    }
+
+    @Test
+    @Order(3)
+    void should_add_another_transaction_with_one_minute_timeout() {
+        Transaction transaction = new Transaction(1L, 1000, TransactionType.SALE, new Date(), 60L);
         transaction.addItem(new Item(1L, "notebook", BigDecimal.TEN));
         transaction.addItem(new Item(2L, "mouse", BigDecimal.ONE));
         transaction.addItem(new Item(3L, "keyboard", BigDecimal.ONE));
@@ -43,15 +52,15 @@ class RedisTransactionRepositoryTest {
     }
 
     @Test
-    @Order(3)
-    void shouldFindByTransactionType() {
+    @Order(4)
+    void should_find_transaction_by_type() {
         List<Transaction> transactions = repository.findByType(TransactionType.SALE);
         assertEquals(1, transactions.size());
     }
 
     @Test
     @Order(4)
-    void shouldFindByItemName() {
+    void should_find_transaction_by_item_name() {
         List<Transaction> transactions = repository.findByItemsName("notebook");
         assertEquals(1, transactions.size());
     }

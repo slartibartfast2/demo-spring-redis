@@ -25,18 +25,18 @@ class RedisUserRepositoryTest {
 
     @Test
     @Order(1)
-    void shouldAdd() {
+    void should_add_user() {
         User user = new User(1L, "1234567890", "test");
-        user.addTransaction(new Transaction(1L, 1, TransactionType.SALE, now()));
-        user.addTransaction(new Transaction(2L, 1, TransactionType.SALE, now()));
-        user.addTransaction(new Transaction(3L, 2, TransactionType.REFUND, now()));
+        user.addTransaction(new Transaction(1L, 1, TransactionType.SALE, now(), 60L));
+        user.addTransaction(new Transaction(2L, 1, TransactionType.SALE, now(), 60L));
+        user.addTransaction(new Transaction(3L, 2, TransactionType.REFUND, now(), 60L));
         user = repository.save(user);
         assertNotNull(user);
     }
 
     @Test
     @Order(2)
-    void shouldFindByAccounts() {
+    void should_find_user_by_transaction_id() {
         List<User> users = repository.findByTransactionsId(3L);
         assertEquals(1, users.size());
         User user = users.get(0);
@@ -46,7 +46,7 @@ class RedisUserRepositoryTest {
 
     @Test
     @Order(3)
-    void shouldFindByExternal() {
+    void should_find_user_by_external_id() {
         Optional<User> optUser = repository.findByExternalId("1234567890");
         assertTrue(optUser.isPresent());
         User user = optUser.get();
